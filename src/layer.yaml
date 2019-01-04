@@ -1,0 +1,5 @@
+includes:
+  - 'layer:openstack'
+  - 'interface:cinder-backup'
+
+repo: https://github.com/openstack-charmers/charm-cinder-backup-swift
