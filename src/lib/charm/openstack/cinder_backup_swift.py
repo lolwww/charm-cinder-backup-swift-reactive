@@ -18,12 +18,8 @@ from charmhelpers.fetch import apt_install, apt_update
 from charms_openstack.charm import OpenStackCharm
 
 
-"""class ProtocolNotImplimented(Exception):
-    """Unsupported protocol error."""
-"""
 
 class CinderBackupSwiftCharm(OpenStackCharm):
-    service_name = 'cinder-purestorage'
     name = 'cinder-backup-swift'
     packages = ['cinder-backup']
     release = 'queens'
@@ -36,7 +32,8 @@ class CinderBackupSwiftCharm(OpenStackCharm):
     def get_swift_backup_config(self):
         status_set('active', 'Unit is ready')
         #name = config('volume-backend-name') or service_name() ??????
-        return SwiftBackupSubordinateContext()()
+        name = "cinder-backup"
+        return name, SwiftBackupSubordinateContext()()
 
     def restart_service(self):
         service_restart('cinder-backup')
