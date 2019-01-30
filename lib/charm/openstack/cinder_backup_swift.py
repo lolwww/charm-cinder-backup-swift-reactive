@@ -1,5 +1,3 @@
-import json
-import subprocess
 
 from charmhelpers.core.hookenv import (
     config,
@@ -14,9 +12,7 @@ from base64 import b64decode
 
 from charmhelpers.contrib.openstack.context import OSContextGenerator
 from charmhelpers.contrib.openstack.utils import get_os_codename_package,CompareOpenStackReleases
-from charmhelpers.fetch import apt_install, apt_update
 from charms_openstack.charm import OpenStackCharm
-
 
 
 class CinderBackupSwiftCharm(OpenStackCharm):
@@ -24,14 +20,8 @@ class CinderBackupSwiftCharm(OpenStackCharm):
     packages = ['cinder-backup']
     release = 'queens'
 
-    def install(self):
-        apt_update(fatal=True)
-        apt_install('cinder-backup', fatal=True)
-        #subprocess.check_call(['pip', 'install', 'purestorage', '--no-deps'])
-
     def get_swift_backup_config(self):
         status_set('active', 'Unit is ready')
-        #name = config('volume-backend-name') or service_name() ??????
         name = "cinder-backup"
         return name, SwiftBackupSubordinateContext()()
 
