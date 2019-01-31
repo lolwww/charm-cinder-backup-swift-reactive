@@ -1,4 +1,4 @@
-name: cinder-backup-swift-reactive
+name: cinder-backup-swift
 summary: Cinder-backup integration for OpenStack Block Storage
 maintainer: Alex Litvinov <alexander.litvinov@canonical.com>
 description: |
