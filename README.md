@@ -13,7 +13,7 @@ To use:
 
     juju deploy cinder
     juju deploy -n 3 ceph
-    juju deploy cinder-backup
+    juju deploy cinder-backup-swift
     juju add-relation cinder-backup-swift cinder
 
 
