@@ -1,6 +1,7 @@
-import charm.openstack.cinder_backup_swift
-import charms_openstack.charm as charm
 import charms.reactive as reactive
+
+import charms_openstack.charm as charm
+import charm.openstack.cinder_backup_swift
 import charms.reactive.flags as flags
 
 from charms.reactive.relations import (
@@ -15,7 +16,8 @@ charm.use_defaults(
 
 flags.register_trigger(when='config.changed', clear_flag='config.complete')
 flags.register_trigger(when='upgraded', clear_flag='config.complete')
-flags.register_trigger(when='endpoint.backup-backend.changed', clear_flag='config.complete')
+flags.register_trigger(when='endpoint.backup-backend.changed',
+                       clear_flag='config.complete')
 
 
 @reactive.when_any('endpoint.backup-backend.available')
@@ -26,7 +28,7 @@ def configure_cinder_backup():
     with charm.provide_charm_instance() as charm_instance:
         # publish config options for all remote units of a given rel
         name, config = charm_instance.get_swift_backup_config()
-        endp.publish(name,config)
+        endp.publish(name, config)
         charm_instance.configure_ca()
         charm_instance.restart_service()
         flags.set_flag('config.complete')
