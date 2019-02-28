@@ -17,3 +17,7 @@ To use:
     juju add-relation cinder-backup-swift cinder
 
 
+# Bugs
+
+Please report bugs on [Launchpad](https://bugs.launchpad.net/charm-cinder-backup-swift/+filebug).
+For general questions please refer to the OpenStack [Charm Guide](https://github.com/openstack/charm-guide).
