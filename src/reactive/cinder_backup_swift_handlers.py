@@ -1,6 +1,6 @@
 import charms.reactive as reactive
 
-import charms_openstack.charm as charm
+import charms_openstack.charm
 import charm.openstack.cinder_backup_swift
 import charms.reactive.flags as flags
 
@@ -8,7 +8,7 @@ from charms.reactive.relations import (
     endpoint_from_flag,
 )
 
-charm.use_defaults(
+charms_openstack.charm.defaults.use_defaults(
     'charm.installed',
     'update-status')
 # if config has been changed we need to re-evaluate flags
