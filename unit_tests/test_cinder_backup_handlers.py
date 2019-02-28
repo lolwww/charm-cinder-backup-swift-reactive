@@ -110,7 +110,7 @@ class TestCinderBackupSwiftHandlers(unittest.TestCase):
                 ('config.changed', )],
         }
         # check the when hooks are attached to the expected functions
-        for t, p in [(_when_args, when_any_patterns)
+        for t, p in [(_when_args, when_any_patterns),
                      (_when_args, when_patterns),
                      ]:
             for f, args in t.items():
