@@ -18,7 +18,7 @@ flags.register_trigger(when='upgraded', clear_flag='config.complete')
 flags.register_trigger(when='endpoint.backup-backend.changed', clear_flag='config.complete')
 
 
-@reactive.when('endpoint.backup-backend.joined')
+@reactive.when_any('endpoint.backup-backend.available')
 @reactive.when_not('config.complete')
 def configure_cinder_backup():
     # don't always have a relation context - obtain from the flag
@@ -30,3 +30,8 @@ def configure_cinder_backup():
         charm_instance.configure_ca()
         charm_instance.restart_service()
         flags.set_flag('config.complete')
+
+
+@reactive.hook('config-changed')
+def update_config():
+    reactive.remove_state('config.complete')
