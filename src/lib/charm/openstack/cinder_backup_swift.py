@@ -1,11 +1,14 @@
-
+import json
 from charmhelpers.core.hookenv import (
     config,
-    status_set
+    log,
+    relation_ids,
+    relation_set,
+    status_set,
+    service_name
 )
 from charmhelpers.core.host import service_restart, install_ca_cert
 from base64 import b64decode
-
 from charmhelpers.contrib.openstack.context import OSContextGenerator
 from charmhelpers.contrib.openstack.utils import get_os_codename_package,\
     CompareOpenStackReleases
@@ -13,14 +16,24 @@ from charms_openstack.charm import OpenStackCharm
 
 
 class CinderBackupSwiftCharm(OpenStackCharm):
-    name = 'cinder-backup-swift'
+    service_name = 'cinder-backup'
     packages = ['cinder-backup']
     release = 'queens'
 
-    def get_swift_backup_config(self):
+    def set_relation_data(self):
+        rel_id = relation_ids('storage-backend')
+        if not len(rel_id):
+            log("No 'storage-backend' relation detected, skipping.")
+        else:
+            relation_set(
+                relation_id=rel_id[0],
+                backend_name=config()['volume-backend-name'] or service_name(),
+                subordinate_configuration=json.dumps(
+                    SwiftBackupSubordinateContext()()),
+                stateless=True,
+            )
+            log('Relation data set for {}'.format(rel_id[0]))
         status_set('active', 'Unit is ready')
-        name = "cinder-backup"
-        return name, SwiftBackupSubordinateContext()()
 
     def restart_service(self):
         service_restart('cinder-backup')

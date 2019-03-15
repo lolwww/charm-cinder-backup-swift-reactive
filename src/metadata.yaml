@@ -12,7 +12,7 @@ series:
 subordinate: true
 provides:
   backup-backend:
-    interface: cinder-backup
+    interface: cinder-backend
     scope: container
 requires:
   juju-info:
