@@ -1,26 +1,26 @@
 import charms.reactive as reactive
+import charms_openstack.charm as charmclass
 import charms_openstack.charm
-import charm.openstack.cinder_backup_swift
-
+import charm.openstack.cinder_backup_swift as cinder_backup_swift
+assert cinder_backup_swift
+import charms.reactive.flags as flags
 
 charms_openstack.charm.defaults.use_defaults(
     'charm.installed',
     'update-status')
 
+flags.register_trigger(when='config.changed',
+                       clear_flag='cinder.configured')
+flags.register_trigger(when='config.changed',
+                       clear_flag='cinder-backup.started')
+flags.register_trigger(when='upgraded', clear_flag='config.rendered')
 
-@reactive.when_any('backup-backend.joined', 'backup-backend.changed')
-@reactive.when_not('backup-backend.available')
-def configure_cinder_backup():
-    with charm.provide_charm_instance() as charm_class:
-        charm_class.set_relation_data()
+
+@reactive.when('backup-backend.available')
+@reactive.when_not('cinder.configured')
+def render_config(principle):
+    with charmclass.provide_charm_instance() as charm_class:
+        name, config = charm_class.get_swift_config()
+        principle.configure_principal(name, config)
         charm_class.configure_ca()
-        charm_class.restart_service()
-    reactive.set_state('backup-backend.available')
-
-
-@reactive.hook('config-changed')
-def update_config():
-    reactive.remove_state('backup-backend.available')
-    with charm.provide_charm_instance() as charm_class:
-        charm_class.set_relation_data()
-    reactive.set_state('backup-backend.available')
+        reactive.set_state('cinder.configured')

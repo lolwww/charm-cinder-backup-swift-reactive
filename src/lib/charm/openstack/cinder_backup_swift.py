@@ -1,4 +1,3 @@
-import json
 from charmhelpers.core.hookenv import (
     config,
     log,
@@ -16,27 +15,18 @@ from charms_openstack.charm import OpenStackCharm
 
 
 class CinderBackupSwiftCharm(OpenStackCharm):
-    service_name = 'cinder-backup'
+    service_name = name = 'cinder-backup'
     packages = ['cinder-backup']
     release = 'queens'
 
-    def set_relation_data(self):
-        rel_id = relation_ids('storage-backend')
-        if not len(rel_id):
-            log("No 'storage-backend' relation detected, skipping.")
-        else:
-            relation_set(
-                relation_id=rel_id[0],
-                backend_name=config()['volume-backend-name'] or service_name(),
-                subordinate_configuration=json.dumps(
-                    SwiftBackupSubordinateContext()()),
-                stateless=True,
-            )
-            log('Relation data set for {}'.format(rel_id[0]))
+    def get_swift_config(self):
         status_set('active', 'Unit is ready')
+        name = "DEFAULT"
+        return name, SwiftBackupSubordinateContext()()
 
     def restart_service(self):
         service_restart('cinder-backup')
+
 
     def configure_ca(self):
         ca_cert = config('ssl-ca')
@@ -89,12 +79,5 @@ class SwiftBackupSubordinateContext(OSContextGenerator):
             ]
         else:
             raise Exception("Unsupported swift auth version")
-        return {
-            "cinder": {
-                "/etc/cinder/cinder.conf": {
-                    "sections": {
-                        'DEFAULT': ctxt
-                    }
-                }
-            }
-        }
+        return ctxt
+

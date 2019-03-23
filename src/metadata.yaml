@@ -11,8 +11,8 @@ series:
   - bionic
 subordinate: true
 provides:
-  backup-backend:
-    interface: cinder-backend
+  cinder-backend:
+    interface: cinder-backup
     scope: container
 requires:
   juju-info:
